@@ -1,33 +1,47 @@
-server:
-  port: 8080
-
+# -------------------- SPRING DATASOURCE CONFIG --------------------
 spring:
   application:
     name: training-management-system
   datasource:
-    url: jdbc:mysql://localhost:3306/tms_db?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
-    username: root
-    password: root
-    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/sphuta?createDatabaseIfNotExist=true&useSSL=false&serverTimezone=UTC
+    # JDBC URL to connect to MySQL database 'sphuta'
+    # createDatabaseIfNotExist=true → auto-create DB if missing
+    # useSSL=false → disable SSL
+    # serverTimezone=UTC → set server timezone
+
+    username: root       # MySQL username
+    password: root       # MySQL password
+    driver-class-name: com.mysql.cj.jdbc.Driver  # MySQL JDBC driver class
+
+  # -------------------- JPA / HIBERNATE CONFIG --------------------
   jpa:
     hibernate:
-      ddl-auto: update
-    show-sql: true
+      ddl-auto: update   # Automatically update DB schema (use 'validate' in production to avoid unintended changes)
+    show-sql: true       # Log SQL statements in console
     properties:
       hibernate:
-        format_sql: true
-    database-platform: org.hibernate.dialect.MySQL8Dialect
+        format_sql: true  # Format SQL for readability
 
-# Swagger / OpenAPI
-springdoc:
-  api-docs:
-    enabled: true
-  swagger-ui:
-    enabled: true
-    path: /swagger-ui.html
+  # -------------------- JACKSON JSON CONFIG --------------------
+  jackson:
+    property-naming-strategy: SNAKE_CASE
+    # Convert Java camelCase properties to snake_case in JSON
 
+# -------------------- SERVER CONFIG --------------------
+server:
+  port: 8080  # Spring Boot application port
+
+# -------------------- LOGGING CONFIG --------------------
 logging:
   level:
-    root: INFO
-    org.springframework.web: DEBUG
-    com.sphuta.tms: DEBUG
+    root: INFO  # Default logging level
+    org.hibernate.SQL: DEBUG  # Log SQL statements
+    org.hibernate.type.descriptor.sql.BasicBinder: TRACE  # Log SQL parameter bindings
+
+# -------------------- SPRINGDOC / SWAGGER CONFIG --------------------
+springdoc:
+  api-docs:
+    path: /api-docs  # Path to access OpenAPI JSON
+    enabled: true
+  swagger-ui:
+    path: /swagger-ui.html  # Path to access Swagger UI

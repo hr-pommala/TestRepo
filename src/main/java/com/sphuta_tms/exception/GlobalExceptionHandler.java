@@ -1,110 +1,93 @@
 package com.sphuta_tms.exception;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.sphuta_tms.util.SphutaApiResponse;
+import jakarta.validation.ConstraintViolationException;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.servlet.resource.NoResourceFoundException;
 
-import java.time.LocalDateTime;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
- * Global exception handler for the entire application.
- *
- * <p>
- * Captures exceptions thrown by controllers/services and converts them
- * into structured JSON responses. This ensures consistent error handling
- * across the API.
- * </p>
+ * Global exception handler for the application.
+ * Catches exceptions and returns proper ApiResponse with HTTP status codes.
  */
+@Slf4j
 @ControllerAdvice
 public class GlobalExceptionHandler {
 
-    /** Application-wide logger */
-    private static final Logger log = LoggerFactory.getLogger(GlobalExceptionHandler.class);
-
     /**
-     * Handle ResourceNotFoundException → HTTP 404.
-     *
-     * @param ex the exception
-     * @return structured error response
+     * Handle resource not found exception.
      */
     @ExceptionHandler(ResourceNotFoundException.class)
-    public ResponseEntity<Map<String, Object>> handleResourceNotFound(ResourceNotFoundException ex) {
-        log.error("Resource not found: {}", ex.getMessage());
-
-        Map<String, Object> error = new HashMap<>();
-        error.put("timestamp", LocalDateTime.now());
-        error.put("status", HttpStatus.NOT_FOUND.value());
-        error.put("error", "Not Found");
-        error.put("message", ex.getMessage());
-
-        return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
+    public ResponseEntity<SphutaApiResponse<?>> handleResourceNotFound(ResourceNotFoundException ex) {
+        log.warn("Resource not found: {}", ex.getMessage());
+        return new ResponseEntity<>(SphutaApiResponse.error(ex.getMessage()), HttpStatus.NOT_FOUND);
     }
 
     /**
-     * Handle BadRequestException → HTTP 400.
-     *
-     * @param ex the exception
-     * @return structured error response
+     * Handle custom validation exception.
      */
-    @ExceptionHandler(BadRequestException.class)
-    public ResponseEntity<Map<String, Object>> handleBadRequest(BadRequestException ex) {
-        log.warn("Bad request: {}", ex.getMessage());
-
-        Map<String, Object> error = new HashMap<>();
-        error.put("timestamp", LocalDateTime.now());
-        error.put("status", HttpStatus.BAD_REQUEST.value());
-        error.put("error", "Bad Request");
-        error.put("message", ex.getMessage());
-
-        return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
+    @ExceptionHandler(ValidationException.class)
+    public ResponseEntity<SphutaApiResponse<?>> handleValidation(ValidationException ex) {
+        log.error("Validation error: {}", ex.getMessage());
+        return new ResponseEntity<>(SphutaApiResponse.error(ex.getMessage()), HttpStatus.BAD_REQUEST);
     }
 
     /**
-     * Handle validation failures triggered by @Valid on DTOs.
-     *
-     * @param ex MethodArgumentNotValidException
-     * @return structured error response with field-level details
+     * Handle bean validation errors (@Valid DTOs).
      */
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<Map<String, Object>> handleValidationErrors(MethodArgumentNotValidException ex) {
-        log.warn("Validation failed: {}", ex.getMessage());
+    public ResponseEntity<SphutaApiResponse<?>> handleMethodArgumentNotValid(MethodArgumentNotValidException ex) {
+        String errors = ex.getBindingResult().getFieldErrors()
+                .stream()
+                .map(err -> err.getField() + ": " + err.getDefaultMessage())
+                .collect(Collectors.joining(", "));
 
-        Map<String, Object> error = new HashMap<>();
-        error.put("timestamp", LocalDateTime.now());
-        error.put("status", HttpStatus.BAD_REQUEST.value());
-        error.put("error", "Validation Failed");
-
-        // Collect field-specific error messages
-        Map<String, String> fieldErrors = new HashMap<>();
-        ex.getBindingResult().getFieldErrors()
-                .forEach(err -> fieldErrors.put(err.getField(), err.getDefaultMessage()));
-        error.put("message", fieldErrors);
-
-        return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
+        log.error("Validation failed: {}", errors);
+        return new ResponseEntity<>(SphutaApiResponse.error(errors), HttpStatus.BAD_REQUEST);
     }
 
     /**
-     * Handle all uncaught exceptions → HTTP 500.
-     *
-     * @param ex the exception
-     * @return structured error response
+     * Handle JSR-380 (Bean Validation) constraint violations.
+     */
+    @ExceptionHandler(ConstraintViolationException.class)
+    public ResponseEntity<SphutaApiResponse<?>> handleConstraintViolation(ConstraintViolationException ex) {
+        String errors = ex.getConstraintViolations()
+                .stream()
+                .map(err -> err.getPropertyPath() + ": " + err.getMessage())
+                .collect(Collectors.joining(", "));
+
+        log.error("Constraint violation: {}", errors);
+        return new ResponseEntity<>(SphutaApiResponse.error(errors), HttpStatus.BAD_REQUEST);
+    }
+
+    /**
+     * Handle generic exceptions.
      */
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<Map<String, Object>> handleGeneralException(Exception ex) {
-        log.error("Unexpected error occurred", ex);
-
-        Map<String, Object> error = new HashMap<>();
-        error.put("timestamp", LocalDateTime.now());
-        error.put("status", HttpStatus.INTERNAL_SERVER_ERROR.value());
-        error.put("error", "Internal Server Error");
-        error.put("message", ex.getMessage());
-
-        return new ResponseEntity<>(error, HttpStatus.INTERNAL_SERVER_ERROR);
+    public ResponseEntity<SphutaApiResponse<?>> handleGenericException(Exception ex) {
+        log.error("Unexpected error occurred: {}", ex.getMessage(), ex);
+        return new ResponseEntity<>(SphutaApiResponse.error("An unexpected error occurred"), HttpStatus.INTERNAL_SERVER_ERROR);
     }
+
+    /**
+     * Handle missing static resources (e.g., favicon.ico).
+     */
+    @ExceptionHandler(NoResourceFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ResponseEntity<SphutaApiResponse<?>> handleNoResourceFound(NoResourceFoundException ex) {
+        if ("favicon.ico".equalsIgnoreCase(ex.getResourcePath())) {
+            log.warn("Ignored missing favicon.ico request");
+            return new ResponseEntity<>(SphutaApiResponse.error("Favicon not found"), HttpStatus.NOT_FOUND);
+        }
+        log.warn("Resource not found: {}", ex.getResourcePath());
+        return new ResponseEntity<>(SphutaApiResponse.error(ex.getMessage()), HttpStatus.NOT_FOUND);
+    }
+
 }
