@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Preferences UI</title>
+</head>
+<body>
+<h1>Preferences Dashboard</h1>
+
+<!-- Create Preference Form -->
+<form method="post" th:action="@{/preferences-ui}">
+    <label>User ID:</label>
+    <input type="text" name="userId" required />
+    <label>Date Format:</label>
+    <input type="text" name="dateFormat" required />
+    <label>Week Starts On:</label>
+    <select name="weekStartsOn">
+        <option th:each="ws : ${T(com.sphuta.tms.constants.WeekStart).values()}"
+                th:value="${ws}" th:text="${ws}"></option>
+    </select>
+    <label>Rounding:</label>
+    <select name="rounding">
+        <option th:each="r : ${T(com.sphuta.tms.constants.Rounding).values()}"
+                th:value="${r}" th:text="${r}"></option>
+    </select>
+    <button type="submit">Create</button>
+</form>
+
+<!-- Get by ID Form -->
+<form method="get" th:action="@{/preferences-ui}" id="getByIdForm">
+    <label>Get Preference by ID:</label>
+    <input type="text" name="getByIdUserId" th:value="${getByIdUserId}" required />
+    <button type="submit">Fetch</button>
+</form>
+
+<!-- Messages -->
+<div th:text="${message}"></div>
+
+<!-- Preferences Table -->
+<table border="1">
+    <thead>
+    <tr>
+        <th>User ID</th>
+        <th>Date Format</th>
+        <th>Week Starts On</th>
+        <th>Rounding</th>
+        <th>Actions</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="pref : ${preferences}">
+        <td th:text="${pref.userId}"></td>
+        <td th:text="${pref.dateFormat}"></td>
+        <td th:text="${pref.weekStartsOn}"></td>
+        <td th:text="${pref.rounding}"></td>
+        <td>
+            <form th:action="@{/preferences-ui/update}" method="post">
+                <input type="hidden" name="userId" th:value="${pref.userId}" />
+                <input type="text" name="dateFormat" th:value="${pref.dateFormat}" />
+                <input type="text" name="weekStartsOn" th:value="${pref.weekStartsOn}" />
+                <input type="text" name="rounding" th:value="${pref.rounding}" />
+                <button type="submit">Update</button>
+            </form>
+            <form th:action="@{/preferences-ui/patch}" method="post">
+                <input type="hidden" name="userId" th:value="${pref.userId}" />
+                <input type="text" name="dateFormat" placeholder="Patch Date Format" />
+                <button type="submit">Patch</button>
+            </form>
+            <form th:action="@{/preferences-ui/delete}" method="post">
+                <input type="hidden" name="userId" th:value="${pref.userId}" />
+                <button type="submit" onclick="return confirm('Are you sure you want to delete this preference?');">Delete</button>
+            </form>
+        </td>
+    </tr>
+    </tbody>
+</table>
+
+</body>
+</html>
