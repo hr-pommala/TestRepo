@@ -24,6 +24,7 @@ import java.util.List;
 @Tag(name = "Settings Profile API", description = "Manage user settings profile (name, phone, timezone, locale)")
 public class SettingsProfileController {
 
+
     private final SettingsProfileService profileService;
 
     // -------------------- GET ALL --------------------
