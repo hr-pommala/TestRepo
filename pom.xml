@@ -96,11 +96,7 @@
             <artifactId>spring-boot-testcontainers</artifactId>
             <scope>test</scope>
         </dependency>
-        <dependency>
-            <groupId>org.mockito</groupId>
-            <artifactId>mockito-core</artifactId>
-            <scope>test</scope>
-        </dependency>
+
         <!-- If you need a database container, add the right module -->
         <dependency>
             <groupId>org.testcontainers</groupId>
@@ -120,21 +116,7 @@
             <scope>test</scope>
         </dependency>
 
-        <!-- Selenium for E2E testing -->
-        <dependency>
-            <groupId>org.seleniumhq.selenium</groupId>
-            <artifactId>selenium-java</artifactId>
-            <version>4.23.0</version>
-            <scope>test</scope>
-        </dependency>
 
-        <!-- WebDriver Manager -->
-        <dependency>
-            <groupId>io.github.bonigarcia</groupId>
-            <artifactId>webdrivermanager</artifactId>
-            <version>5.5.3</version>
-            <scope>test</scope>
-        </dependency>
     </dependencies>
 
     <build>

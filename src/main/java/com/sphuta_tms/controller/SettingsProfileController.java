@@ -2,7 +2,7 @@ package com.sphuta_tms.controller;
 
 import com.sphuta_tms.dto.SettingsProfileDTO;
 import com.sphuta_tms.service.SettingsProfileService;
-import com.sphuta_tms.util.SphutaTmsApiResponse;
+import com.sphuta_tms.util.SphutaApiResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -29,9 +29,9 @@ public class SettingsProfileController {
     // -------------------- GET ALL --------------------
     @GetMapping
     @Operation(summary = "Get All Profiles", description = "Fetch all user profiles")
-    public SphutaTmsApiResponse<List<SettingsProfileDTO>> getAllProfiles() {
+    public SphutaApiResponse<List<SettingsProfileDTO>> getAllProfiles() {
         log.info("Fetching all profiles");
-        return SphutaTmsApiResponse.success(
+        return SphutaApiResponse.success(
                 "Profiles fetched successfully",
                 profileService.getAllProfiles()
         );
@@ -40,9 +40,9 @@ public class SettingsProfileController {
     // -------------------- GET BY PATH --------------------
     @GetMapping("/{userId}")
     @Operation(summary = "Get Profile by ID", description = "Fetch profile for a specific user by userId")
-    public SphutaTmsApiResponse<SettingsProfileDTO> getProfileById(@PathVariable Long userId) {
+    public SphutaApiResponse<SettingsProfileDTO> getProfileById(@PathVariable Long userId) {
         log.info("Fetching profile by ID for user: {}", userId);
-        return SphutaTmsApiResponse.success(
+        return SphutaApiResponse.success(
                 "Profile fetched successfully",
                 profileService.getProfile(userId)
         );
@@ -52,10 +52,10 @@ public class SettingsProfileController {
     @PostMapping
     @Operation(summary = "Create Profile", description = "Create settings profile for a new user")
     @ApiResponse(responseCode = "201", description = "Profile created successfully")
-    public SphutaTmsApiResponse<SettingsProfileDTO> createProfile(
+    public SphutaApiResponse<SettingsProfileDTO> createProfile(
             @Valid @RequestBody SettingsProfileDTO dto) {
         log.info("Creating profile for user: {}", dto.userId());
-        return SphutaTmsApiResponse.success(
+        return SphutaApiResponse.success(
                 "Profile created successfully",
                 profileService.createProfile(dto.userId(), dto)
         );
@@ -64,11 +64,11 @@ public class SettingsProfileController {
     // -------------------- PUT --------------------
     @PutMapping("/{userId}")
     @Operation(summary = "Update Profile", description = "Update all fields of a user's profile")
-    public SphutaTmsApiResponse<SettingsProfileDTO> updateProfile(
+    public SphutaApiResponse<SettingsProfileDTO> updateProfile(
             @PathVariable Long userId,
             @Valid @RequestBody SettingsProfileDTO dto) {
         log.info("Updating all profile fields for user: {}", userId);
-        return SphutaTmsApiResponse.success(
+        return SphutaApiResponse.success(
                 "Profile updated successfully",
                 profileService.updateProfile(userId, dto)
         );
@@ -77,11 +77,11 @@ public class SettingsProfileController {
     // -------------------- PATCH --------------------
     @PatchMapping("/{userId}")
     @Operation(summary = "Patch Profile", description = "Update partial fields of user profile")
-    public SphutaTmsApiResponse<SettingsProfileDTO> patchProfile(
+    public SphutaApiResponse<SettingsProfileDTO> patchProfile(
             @PathVariable Long userId,
             @RequestBody SettingsProfileDTO dto) {
         log.info("Patching profile for user: {}", userId);
-        return SphutaTmsApiResponse.success(
+        return SphutaApiResponse.success(
                 "Profile patched successfully",
                 profileService.patchProfile(userId, dto)
         );
@@ -90,9 +90,9 @@ public class SettingsProfileController {
     // -------------------- DELETE --------------------
     @DeleteMapping("/{userId}")
     @Operation(summary = "Delete Profile", description = "Delete profile for a user")
-    public SphutaTmsApiResponse<Void> deleteProfile(@PathVariable Long userId) {
+    public SphutaApiResponse<Void> deleteProfile(@PathVariable Long userId) {
         log.warn("Deleting profile for user: {}", userId);
         profileService.deleteProfile(userId);
-        return SphutaTmsApiResponse.success("Profile deleted successfully", null);
+        return SphutaApiResponse.success("Profile deleted successfully", null);
     }
 }

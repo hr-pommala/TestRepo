@@ -12,14 +12,14 @@ import java.time.LocalDateTime;
  * @param <T> the type of data being returned in response
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class SphutaTmsApiResponse<T> {
+public class SphutaApiResponse<T> {
 
     private final int statusCode;
     private final String message;
     private final T data;
     private final LocalDateTime timestamp;
 
-    public SphutaTmsApiResponse(int statusCode, String message, T data, LocalDateTime timestamp) {
+    public SphutaApiResponse(int statusCode, String message, T data, LocalDateTime timestamp) {
         this.statusCode = statusCode;
         this.message = message;
         this.data = data;
@@ -46,30 +46,30 @@ public class SphutaTmsApiResponse<T> {
     // -------------------- SUCCESS FACTORY METHODS --------------------
 
     /** Full control with explicit status code */
-    public static <T> SphutaTmsApiResponse<T> success(int statusCode, String message, T data) {
-        return new SphutaTmsApiResponse<>(statusCode, message, data, LocalDateTime.now());
+    public static <T> SphutaApiResponse<T> success(int statusCode, String message, T data) {
+        return new SphutaApiResponse<>(statusCode, message, data, LocalDateTime.now());
     }
 
     /** Default success (200) with message + data */
-    public static <T> SphutaTmsApiResponse<T> success(String message, T data) {
+    public static <T> SphutaApiResponse<T> success(String message, T data) {
         return success(200, message, data);
     }
 
     /** Default success (200) with only message (no data) */
-    public static SphutaTmsApiResponse<Void> success(String message) {
+    public static SphutaApiResponse<Void> success(String message) {
         return success(200, message, null);
     }
 
     // -------------------- ERROR FACTORY METHODS --------------------
 
     /** Error with explicit status code + message */
-    public static <T> SphutaTmsApiResponse<T> error(int statusCode, String message) {
-        return new SphutaTmsApiResponse<>(statusCode, message, null, LocalDateTime.now());
+    public static <T> SphutaApiResponse<T> error(int statusCode, String message) {
+        return new SphutaApiResponse<>(statusCode, message, null, LocalDateTime.now());
     }
 
     /** Error from Exception */
-    public static <T> SphutaTmsApiResponse<T> error(int statusCode, Exception ex) {
-        return new SphutaTmsApiResponse<>(statusCode, ex.getMessage(), null, LocalDateTime.now());
+    public static <T> SphutaApiResponse<T> error(int statusCode, Exception ex) {
+        return new SphutaApiResponse<>(statusCode, ex.getMessage(), null, LocalDateTime.now());
     }
 
     @Override
