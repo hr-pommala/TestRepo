@@ -1,4 +1,4 @@
-package com.sphuta.main;
+package com.sphuta_tms;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
