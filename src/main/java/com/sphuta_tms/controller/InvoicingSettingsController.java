@@ -32,6 +32,7 @@ public class InvoicingSettingsController {
      * GET /api/v1/settings/invoicing
      * Fetch all invoicing settings.
      */
+
     @GetMapping
     @Operation(summary = "Get all invoicing settings",
             description = "Returns a list of all invoicing settings configured in the system")
