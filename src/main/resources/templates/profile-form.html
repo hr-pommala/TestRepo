@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Settings Profile CRUD</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .container { max-width: 600px; margin: auto; }
+        form { margin-bottom: 20px; padding: 15px; border: 1px solid #ddd; border-radius: 8px; }
+        input, select, button { padding: 8px; margin: 5px 0; width: 100%; }
+        .message { color: green; font-weight: bold; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>Settings Profile CRUD</h1>
+
+    <p class="message" th:text="${message}"></p>
+
+    <!-- CREATE -->
+    <form id="createForm" th:action="@{/ui/settings/profile/create}" method="post">
+        <h3>Create Profile</h3>
+        <input id="createUserId" type="number" name="userId" placeholder="User ID" required>
+        <input id="createName" type="text" name="name" placeholder="Name">
+        <input id="createPhone" type="text" name="phone" placeholder="Phone">
+        <input id="createTimezone" type="text" name="timezone" placeholder="Timezone">
+        <input id="createLocale" type="text" name="locale" placeholder="Locale">
+        <button id="createBtn" type="submit">Create</button>
+    </form>
+
+    <!-- UPDATE -->
+    <form id="updateForm" th:action="@{/ui/settings/profile/update}" method="post">
+        <h3>Update Profile</h3>
+        <input id="updateUserId" type="number" name="userId" placeholder="User ID" required>
+        <input id="updateName" type="text" name="name" placeholder="Name">
+        <input id="updatePhone" type="text" name="phone" placeholder="Phone">
+        <input id="updateTimezone" type="text" name="timezone" placeholder="Timezone">
+        <input id="updateLocale" type="text" name="locale" placeholder="Locale">
+        <button id="updateBtn" type="submit">Update</button>
+    </form>
+
+    <!-- PATCH -->
+    <form id="patchForm" th:action="@{/ui/settings/profile/patch}" method="post">
+        <h3>Patch Profile (Partial Update)</h3>
+        <input id="patchUserId" type="number" name="userId" placeholder="User ID" required>
+        <input id="patchName" type="text" name="name" placeholder="New Name (optional)">
+        <input id="patchPhone" type="text" name="phone" placeholder="New Phone (optional)">
+        <input id="patchTimezone" type="text" name="timezone" placeholder="New Timezone (optional)">
+        <input id="patchLocale" type="text" name="locale" placeholder="New Locale (optional)">
+        <button id="patchBtn" type="submit">Patch</button>
+    </form>
+
+    <!-- GET -->
+    <form id="getForm" th:action="@{/ui/settings/profile/get}" method="get">
+        <h3>Get Profile</h3>
+        <input id="getUserId" type="number" name="userId" placeholder="User ID" required>
+        <button id="getBtn" type="submit">Fetch</button>
+    </form>
+
+    <!-- DELETE -->
+    <form id="deleteForm" th:action="@{/ui/settings/profile/delete}" method="post">
+        <h3>Delete Profile</h3>
+        <input id="deleteUserId" type="number" name="userId" placeholder="User ID" required>
+        <button id="deleteBtn" type="submit">Delete</button>
+    </form>
+</div>
+</body>
+</html>

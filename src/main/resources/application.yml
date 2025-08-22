@@ -1,5 +1,7 @@
 # -------------------- SPRING DATASOURCE CONFIG --------------------
 spring:
+  application:
+    name: training-management-system
   datasource:
     url: jdbc:mysql://localhost:3306/sphuta?createDatabaseIfNotExist=true&useSSL=false&serverTimezone=UTC
     # JDBC URL to connect to MySQL database 'sphuta'
@@ -40,5 +42,6 @@ logging:
 springdoc:
   api-docs:
     path: /api-docs  # Path to access OpenAPI JSON
+    enabled: true
   swagger-ui:
     path: /swagger-ui.html  # Path to access Swagger UI
